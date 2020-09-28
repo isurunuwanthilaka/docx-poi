@@ -1,12 +1,12 @@
 package com.isuru.docxpoi.utils;
 
 import com.isuru.docxpoi.dto.UserDto;
+import fr.opensagres.poi.xwpf.converter.pdf.PdfConverter;
+import fr.opensagres.poi.xwpf.converter.pdf.PdfOptions;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.stereotype.Component;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -21,11 +21,11 @@ public class DocxHelper {
         String resourcePath = "template.docx";
         Path templatePath = Paths.get(DocxHelper.class.getClassLoader().getResource(resourcePath).toURI());
         XWPFDocument doc = new XWPFDocument(Files.newInputStream(templatePath));
-        HashMap<String, String> map = new HashMap<String, String>();
+        HashMap<String, String> map = new HashMap<>();
         map.put(VariableTypes.FIRST_NAME.toString(), dto.getFirstName());
         map.put(VariableTypes.LAST_NAME.toString(), dto.getLastName());
         doc = replaceTextFor(doc, map);
-        saveWord("src/main/resources/document.docx", doc);
+        savePdf("src/main/resources/document.pdf", doc);
     }
 
     private XWPFDocument replaceTextFor(XWPFDocument doc, HashMap map) {
@@ -43,15 +43,13 @@ public class DocxHelper {
         return doc;
     }
 
-    private void saveWord(String filePath, XWPFDocument doc) throws FileNotFoundException, IOException {
-        FileOutputStream out = null;
+    private void savePdf(String filePath, XWPFDocument doc) {
         try {
-            out = new FileOutputStream(filePath);
-            doc.write(out);
+            PdfOptions options = PdfOptions.create();
+            OutputStream out = new FileOutputStream(new File(filePath));
+            PdfConverter.getInstance().convert(doc, out, options);
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            out.close();
         }
     }
 }
