@@ -10,10 +10,7 @@ import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -25,7 +22,7 @@ import java.util.List;
 @Component
 public class DocxHelper {
 
-    public void createDocx(UserDto dto) throws URISyntaxException, IOException {
+    public ByteArrayOutputStream createDocx(UserDto dto) throws URISyntaxException, IOException {
 
         String resourcePath = "template.docx";
         Path templatePath = Paths.get(DocxHelper.class.getClassLoader().getResource(resourcePath).toURI());
@@ -35,7 +32,13 @@ public class DocxHelper {
         map.put(VariableTypes.LAST_NAME.toString(), dto.getLastName());
         replaceTextFor(doc, map);
         replaceTable(doc);
-        savePdf("src/main/resources/document.pdf", doc);
+        //savePdf("src/main/resources/document.pdf", doc);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        PdfOptions options = PdfOptions.create();
+        PdfConverter.getInstance().convert(doc, out, options);
+        out.close();
+        return out;
     }
 
     private void replaceTextFor(XWPFDocument doc, HashMap map) {
