@@ -5,11 +5,18 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
+@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-public class UserDto {
+public class EmployeeDetails {
     private String firstName;
     private String lastName;
+    private String position;
+    private String gender;
+    private LocalDate dob;
+    private String address;
+    private Integer employeeId;
 }
