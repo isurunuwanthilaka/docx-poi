@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Data {
-    private String col1;
-    private String col2;
+public class SalaryRecord {
+    private String month;
+    private String amount;
 }
